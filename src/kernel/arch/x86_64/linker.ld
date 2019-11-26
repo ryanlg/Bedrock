@@ -3,9 +3,9 @@ ENTRY(_start)
 SECTIONS {
     . = 1M;
 
+    /* ensure the multiboot header is at the beginning */
     .boot BLOCK(4K): ALIGN(4K)
     {
-        /* ensure that the multiboot header is at the beginning */
         *(.multiboot)
     }
 
