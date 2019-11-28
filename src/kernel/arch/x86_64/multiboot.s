@@ -1,8 +1,7 @@
-; Bootstrap using Multiboot 2 
+; Bootstrap using Multiboot 2
 
 MB_MAGIC       equ 0xE85250D6   ; multiboot 2
 MB_ARCH        equ 0            ; i386 Protected mode
-
 
 section .multiboot
 mb_hdr_start:
@@ -16,6 +15,3 @@ mb_hdr_start:
             dw 0    ; flags
             dd 8    ; size
 mb_hdr_end:
-
-
-

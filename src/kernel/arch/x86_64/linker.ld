@@ -1,9 +1,12 @@
-ENTRY(_start)
+ENTRY(_global_start)
 
 SECTIONS {
     . = 1M;
 
-    /* ensure the multiboot header is at the beginning */
+    /*
+     * Boot header has to be at the beginning,
+     * so bootloders can find and load the code.
+     */
     .boot BLOCK(4K): ALIGN(4K)
     {
         *(.multiboot)
@@ -12,5 +15,10 @@ SECTIONS {
     .text :
     {
         *(.text)
+    }
+
+    .bss BLOCK(4K): ALIGN(4K)
+    {
+        *(.bss)
     }
 }
