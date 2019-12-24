@@ -24,13 +24,14 @@ asm_objs             := $(addprefix $(build_arch_dir)/, $(notdir $(asm_src:.s=.s
 
 grub_config          := $(src_archdir)/grub.cfg
 linker_script        := $(src_archdir)/linker.ld
+linker_args          := --nmagic --omagic --gc-sections -Bstatic --whole-archive -Bdynamic
 
 # =========== Programs/Flags ===============
 # Programs
 VM           := qemu-system-x86_64
-CC           := gcc
-CPP          := g++
-LINKER       := ld
+CC           := clang
+CPP          := clang++
+LINKER       := ld.lld
 ASSEMBLER    := nasm
 
 # Flags
@@ -47,7 +48,7 @@ $(build_arch_dir)/%.s.o: $(src_archdir)/%.s
 
 # Linker
 $(distkernel): $(asm_objs) $(linker_script)
-	@$(LINKER) -n -T $(linker_script) -o $(distkernel) $(asm_objs)
+	@$(LINKER) $(linker_args) -T $(linker_script) -o $(distkernel) $(asm_objs)
 
 # Make ISO
 build_iso_dir  := $(build_arch_dir)/isofiles
@@ -75,4 +76,3 @@ clean-kernel:
 	@rm -rf $(distkernel)
 clean-build:
 	@rm -rf $(build_arch_dir)/*
-
