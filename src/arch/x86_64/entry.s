@@ -14,13 +14,18 @@ stack_top:
             bits 32
             global _global_start
 _global_start:
+            call _check_multiboot
+
             mov ebp, stack_top
             mov esp, stack_top
 
-            call _check_multiboot
+extern _kernel_entry
+            call _kernel_entry
 
-            mov dword [0xb8000], 0x2f4b2f4f    ; Prints green 'OK'
+            cli
+_infi_hlt:
             hlt
+            jmp _infi_hlt
 
 ; Check if the bootloader successfully loaded the kernel
 _check_multiboot:
