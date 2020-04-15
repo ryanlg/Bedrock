@@ -34,14 +34,14 @@ rust_kernel_lib_debug:= $(rust_target_debug)/libredstone.a
 # =========== Programs/Flags ===============
 # Programs
 VM           := qemu-system-x86_64
-CC           := clang
-CPP          := clang++
-LINKER       := ld.lld
+CC           := clang-10
+CPP          := clang++-10
+LINKER       := ld.lld-10
 ASSEMBLER    := nasm
 CARGO        := cargo
 
 # Flags
-VMFLAGS      := -cdrom $(distiso)
+VMFLAGS      := -cdrom $(distiso) -nographic -curses
 
 # ================= Args ===================
 # ld.lld
