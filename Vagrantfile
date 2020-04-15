@@ -8,5 +8,6 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "hashicorp/bionic64"
 
-  config.vm.provision :shell, path: "vagrant-bootstrap.sh"
+  config.vm.provision :shell, path: "vagrant/privileged.sh", privileged: true
+  config.vm.provision :shell, path: "vagrant/bootstrap.sh",  privileged: false
 end
