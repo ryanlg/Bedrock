@@ -8,6 +8,12 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "hashicorp/bionic64"
 
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+    v.cpus = 8
+  end
+
+
   config.vm.provision :shell, path: "vagrant/privileged.sh", privileged: true
   config.vm.provision :shell, path: "vagrant/bootstrap.sh",  privileged: false
 end

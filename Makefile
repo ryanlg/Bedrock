@@ -29,7 +29,10 @@ linker_script        := $(src_archdir)/linker.ld
 # Rust
 rust_src             := $(srcdir)
 rust_target_debug    := target/$(target_triple)/debug
-rust_kernel_lib_debug:= $(rust_target_debug)/libredstone.a
+rust_target_release  := target/$(target_triple)/release
+
+debug   :rust_kernel_lib := $(rust_target_debug)/libredstone.a
+release :rust_kernel_lib := $(rust_target_release)/libredstone.a
 
 # =========== Programs/Flags ===============
 # Programs
@@ -48,7 +51,10 @@ VMFLAGS      := -cdrom $(distiso) -nographic -curses
 linker_args          := --nmagic --omagic --gc-sections -Bstatic --whole-archive -Bdynamic
 
 # Rust
-cargo_args           := xbuild
+cargo_cmd            := xbuild
+
+debug  : cargo_arg   :=
+release: cargo_arg   := --release
 
 
 # ================ Targets =================
@@ -57,14 +63,15 @@ cargo_args           := xbuild
 all: debug
 
 debug: $(distiso) run
+release: $(distiso)
 
 # Assemble .s
 $(build_arch_dir)/%.s.o: $(src_archdir)/%.s
 	@$(ASSEMBLER) -f $(exe_arch) $< -o $@
 
 # Linker
-$(distkernel): rust_kernel $(asm_objs) $(linker_script)
-	@$(LINKER) $(linker_args) -T $(linker_script) -o $(distkernel) $(asm_objs) $(rust_kernel_lib_debug)
+$(distkernel): rust_build $(asm_objs) $(linker_script)
+	@$(LINKER) $(linker_args) -T $(linker_script) -o $(distkernel) $(asm_objs) $(rust_kernel_lib)
 
 # Make ISO
 build_iso_dir  := $(build_arch_dir)/isofiles
@@ -73,15 +80,15 @@ $(distiso): $(distkernel) $(grub_config)
 	@mkdir         -p $(build_iso_dir)/boot/grub
 	@cp               $(distkernel)  $(build_iso_dir)/boot/$(build_kernel_name)
 	@cp               $(grub_config) $(build_iso_dir)/boot/grub/$(notdir $(grub_config))
-	@grub-mkrescue -o $(distiso)     $(build_iso_dir) 2>/dev/null
+	@grub-mkrescue -o $(distiso)     $(build_iso_dir)
 	@rm            -r $(build_iso_dir)
 
 # ----------------- Rust ------------------
 # Compile Rust src
 # Always run, let the compiler deal with file changes
-.PHONY: rust_kernel
-rust_kernel:
-	@$(CARGO) $(cargo_args)
+.PHONY: rust_build
+rust_build:
+	@$(CARGO) $(cargo_cmd) $(cargo_arg)
 
 
 # ================== Run ==================
@@ -90,8 +97,8 @@ run:
 	@$(VM) $(VMFLAGS)
 
 # =============== Clean ====================
-.PHONY: clean clean-iso clean-kernel
-clean: clean-build clean-dist
+.PHONY: clean clean-iso clean-kernel clean-target clean-sysroot
+clean: clean-build clean-dist clean-target
 clean-dist: clean-iso clean-kernel
 clean-iso:
 	@rm -rf $(distiso)
@@ -99,3 +106,9 @@ clean-kernel:
 	@rm -rf $(distkernel)
 clean-build:
 	@rm -rf $(build_arch_dir)/*
+clean-target:
+	@rm -rf target/release
+	@rm -rf target/debug
+	@rm -rf target/$(target_triple)
+clean-sysroot:
+	@rm -rf target/sysroot

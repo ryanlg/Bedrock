@@ -19,9 +19,15 @@ _global_start:
             mov ebp, stack_top
             mov esp, stack_top
 
+; @mp: Currently this bootloader assumes it has exclusive
+; control over all resources, this will not work with
+; multiple processors down the line, if we ever get to that point.
+; But now this will suffice.
 extern _kernel_entry
             call _kernel_entry
 
+; Should not happen, but if happens, halt the cpu
+_kernel_return:
             cli
 _infi_hlt:
             hlt
