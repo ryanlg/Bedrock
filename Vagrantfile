@@ -13,6 +13,7 @@ Vagrant.configure("2") do |config|
     v.cpus = 8
   end
 
+  config.vm.network "forwarded_port", guest: 1234, host: 1234
 
   config.vm.provision :shell, path: "vagrant/privileged.sh", privileged: true
   config.vm.provision :shell, path: "vagrant/bootstrap.sh",  privileged: false

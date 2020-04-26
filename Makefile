@@ -44,7 +44,8 @@ ASSEMBLER    := nasm
 CARGO        := cargo
 
 # Flags
-VMFLAGS      := -cdrom $(distiso) -nographic -curses
+VMFLAGS        := -cdrom $(distiso) -nographic #-curses 
+gdb: VMFLAGS   := -cdrom $(distiso) -nographic -s -S
 
 # ================= Args ===================
 # ld.lld
@@ -62,7 +63,7 @@ release: cargo_arg   := --release
 .PHONY: all debug
 all: debug
 
-debug: $(distiso) run
+debug: $(distiso)
 release: $(distiso)
 
 # Assemble .s
@@ -92,8 +93,11 @@ rust_build:
 
 
 # ================== Run ==================
-.PHONY: run
+.PHONY: run gdb
 run:
+	@$(VM) $(VMFLAGS)
+
+gdb:
 	@$(VM) $(VMFLAGS)
 
 # =============== Clean ====================
