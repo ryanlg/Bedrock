@@ -15,6 +15,6 @@ Vagrant.configure("2") do |config|
 
   config.vm.network "forwarded_port", guest: 1234, host: 1234
 
-  config.vm.provision :shell, path: "vagrant/privileged.sh", privileged: true
-  config.vm.provision :shell, path: "vagrant/bootstrap.sh",  privileged: false
+  config.vm.provision :shell, path: "support/vagrant/privileged.sh", privileged: true
+  config.vm.provision :shell, path: "support/vagrant/bootstrap.sh",  privileged: false
 end
