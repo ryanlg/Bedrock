@@ -8,3 +8,8 @@ target/
 
 # Vagrant stuff
 .vagrant/
+
+
+#Added by cargo
+
+/target

@@ -9,9 +9,7 @@
 
 
 // ================ Modules ================
-mod bios;
-mod cpu;
-mod constants;
+mod serial;
 
 // ================ Imports ================
 use core::panic::PanicInfo;
@@ -26,5 +24,10 @@ fn panic(_info: &PanicInfo) -> ! {
 
 #[lang = "eh_personality"]
 fn handle_error() {
+    loop {}
+}
+
+#[no_mangle]
+extern "C" fn _bootloader_entry() -> ! {
     loop {}
 }
