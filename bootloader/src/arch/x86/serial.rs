@@ -1,5 +1,4 @@
-use super::bios::bda;
-use super::cpu::asm::{outb, inb};
+use super::asm::{outb, inb};
 
 use crate::serial::SerialPort;
 
@@ -7,24 +6,19 @@ use crate::serial::SerialPort;
  */
 #[derive(Copy, Clone)]
 #[repr(transparent)]
-pub struct SerialPort(u16);
+pub struct BiosSerialPort(u16);
 
-impl SerialPort {
-    unsafe fn write_byte_at_offset(&self, offset: u16, byte: u8) {
-        outb(self.0 + offset, byte);
-    }
-
+impl BiosSerialPort {
     unsafe fn write_byte_at_offset(&self, offset: u16, byte: u8) {
         outb(self.0 + offset, byte);
     }
 }
 
-impl SerialPort for SerialPort {
+impl SerialPort for BiosSerialPort {
 
-    pub fn init(&self) -> bool {
+    unsafe fn init(&self) -> bool {
 
-        if !port.is_valid() 
-            return false;
+        if !self.is_valid() { return false; }
 
         // Now we initialize those ports
         self.write_byte_at_offset(1, 0x00);   // Disable all interrupts
@@ -39,23 +33,23 @@ impl SerialPort for SerialPort {
     }
 
     #[inline(always)]
-    pub fn is_valid(&self) -> bool {
+    unsafe fn is_valid(&self) -> bool {
         self.0 != 0
     }
 
     #[inline(always)]
-    pub unsafe fn tx_byte(&self, byte: u8) -> bool{
+    unsafe fn tx_byte(&self, byte: u8) -> bool{
 
-        if !port.is_valid() return false;
+        if !self.is_valid() { return false; }
 
         self.write_byte_at_offset(0, byte);
         true
     }
 
     #[inline(always)]
-    pub unsafe fn tx_bytes(&self, bytes: &[u8]) -> bool{
+    unsafe fn tx_bytes(&self, bytes: &[u8]) -> bool{
 
-        if !port.is_valid() return false;
+        if !self.is_valid() { return false; }
 
         for &byte in bytes {
             while !self.is_tx_empty() {}
@@ -66,30 +60,7 @@ impl SerialPort for SerialPort {
     }
 
     #[inline(always)]
-    pub unsafe fn is_tx_empty(&self) -> bool {
+    unsafe fn is_tx_empty(&self) -> bool {
         inb(self.0 + 5) & 0x20 != 0
-    }
-}
-
-impl Serial {
-
-    /**
-     * Create a new Seiral representation of the COM ports defined in BDA
-     */
-    pub unsafe fn new() -> Self {
-
-        let mut devices = [SerialPort(0); BDA_COM_NUM];
-
-        for index in 0..BDA_COM_NUM {
-
-            let addr = bda::get_word_at_offset(index as u16);
-            let port = SerialPort(addr);
-            devices[index] = port;
-
-        }
-
-        Serial {
-            devices: devices,
-        }
     }
 }

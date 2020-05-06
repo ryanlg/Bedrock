@@ -9,10 +9,15 @@
 
 
 // ================ Modules ================
+mod arch;
+
 mod serial;
 
 // ================ Imports ================
 use core::panic::PanicInfo;
+
+#[cfg(target_arch = "x86")]
+use crate::arch::x86;
 
 /*
  * Rust requires a panic handler and a eh_personality lang item.
