@@ -37,11 +37,11 @@ rust_sysroot         := $(target_dir)/sysroot/$(triple)
 # =================== Programs/Flags ==================
 CC                   := clang
 CPP                  := clang++
-LINKER               := ld.lld-10
+LINKER               := ld.lld
 ASSEMBLER            := nasm
 CARGO                := cargo
-STRIPPER             := strip
-OBJCOPY              := objcopy
+STRIPPER             := x86_64-elf-strip
+OBJCOPY              := x86_64-elf-objcopy
 
 # ld.lld
 linker_args          := --nmagic --omagic --gc-sections -Bstatic --whole-archive -Bdynamic
@@ -80,4 +80,4 @@ $(build_stripped): $(build_linked)
 
 # Flatten to a binary
 $(build_flattened): $(build_stripped)
-	@$(OBJCOPY) -O binary $(build_stripped) $(build_flattened)
+	@$(OBJCOPY) -O binary --only-section=.text $(build_stripped) $(build_flattened)
