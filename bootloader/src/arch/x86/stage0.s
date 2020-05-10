@@ -24,18 +24,26 @@ _boot_entry:
     ; We can just use the space above us (0x7c00)
     ; According to OSDev, we have almost 30KB of free space
     ; before we hit anything related to BIOS.
-    mov   esp, 0x7c00
-    mov   ebp, esp
+    mov  sp, 0x7c00
+    mov  bp, sp
 
     ; Clear the window
-;   call  real_mode.clear
-;   call  real_mode.reset_cursor
+    call  real_mode.clear
+    call  real_mode.reset_cursor
 
-;   mov   si, real_mode_strings.live
-;   call  real_mode.println
+    mov   si, real_mode_strings.live
+    call  real_mode.println
 
-;   mov   si, real_mode_strings.switch
-;   call  real_mode.println
+    mov   si, real_mode_strings.switch
+    call  real_mode.println
+
+extern __stage2_entry
+    ; Read stage1 bootloader into memory
+    push  dword 0x0000
+    push  dword 0x0001
+    push  dword __stage2_entry
+    push  word 0x2
+    call  real_mode.read_sectors
 
     ; Enter protected mode
     mov   eax, cr0
@@ -60,7 +68,6 @@ _pm_entry:
 
 extern _bootloader_entry
    call  _bootloader_entry
-
 
 ; ========================= GDT =====================
 align 8
