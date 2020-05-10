@@ -1,0 +1,10 @@
+[package]
+name = "redstone"
+version = "0.1.0"
+authors = ["Ryan Liang <rl@ryanl.io>"]
+edition = "2018"
+
+[profile.release]
+opt-level   = 3
+lto         = true
+incremental = false
