@@ -19,7 +19,6 @@ SECTIONS {
         __start = .;
 
         *(.stage0_text)
-        *(.rust_text)
 
         __text_end = .;
         __text_size = __text_end - __start;
@@ -33,9 +32,27 @@ SECTIONS {
         SHORT(0xAA55);
 
         ASSERT(__text_size < 512, "Text Segment too big for MBR");
+
+        __rust_text_start = .;
+
+        /**
+         * @improvement:
+         * We put Rust text after the magic number (effectively starting at the
+         * second sector) because Rust code is gonna grow pretty big, later on
+         * we might be able to cut the Rust code into chunks to reduce the file
+         * size, but that's for later.
+         */
+        *(.rust_text)
+
+        /** Exhaust all other text segments */
+        *(.*text*)
+
+        /* Size has to be multiples of 512 bytes */
+        . = ALIGN(512);
+        __rust_text_end  = .;
     }
 
-    /* Size has to be multiples of 512 bytes */
-    . = ALIGN(512);
-    __end = .;
+    /** Just in case rodata is placed defautly before our .text */
+    . = ALIGN(16);
+    .rodata           : { *(.rodata) }
 }

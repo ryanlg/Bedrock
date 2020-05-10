@@ -28,14 +28,14 @@ _boot_entry:
     mov   ebp, esp
 
     ; Clear the window
-    call  real_mode.clear
-    call  real_mode.reset_cursor
+;   call  real_mode.clear
+;   call  real_mode.reset_cursor
 
-    mov   si, real_mode_strings.live
-    call  real_mode.println
+;   mov   si, real_mode_strings.live
+;   call  real_mode.println
 
-    mov   si, real_mode_strings.switch
-    call  real_mode.println
+;   mov   si, real_mode_strings.switch
+;   call  real_mode.println
 
     ; Enter protected mode
     mov   eax, cr0
@@ -77,6 +77,6 @@ gdt:
 ; ====================== Strings =====================
 real_mode_strings:
 .live:        db  'We are live and in real mode', 0
-.switch:      db  'We are switching to protected mode', 0
+.switch:      db  'Switching to protected mode, see you in Rust', 0
 
 ; The MBR magic number is added in the linker script
