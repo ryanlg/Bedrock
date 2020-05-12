@@ -10,6 +10,7 @@ QEMU     := qemu-system-x86_64
 BOCHS    := bochs
 
 qemu_drive_arg  := -drive format=raw,file=$(bootloader_dir)/$(bootloader_padded)
+qemu_serial_arg := -serial stdio
 
 bochs_drive_arg := 'ata0-master: type=disk, \
                                  path="build/bootloader/redstone-bootloader-x86.padded.bin", \
@@ -32,10 +33,10 @@ release:
 
 # ---------------- Run ----------------
 qemu:
-	$(QEMU) $(qemu_drive_arg)
+	$(QEMU) $(qemu_drive_arg) $(qemu_serial_arg)
 
 qemu-gdb:
-	$(QEMU) $(qemu_drive_arg) -s -S
+	$(QEMU) $(qemu_drive_arg) $(qemu_serial_arg) -s -S
 
 qemu-noui:
 	$(QEMU) $(qemu_drive_arg) -nographic
