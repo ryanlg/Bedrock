@@ -1,47 +1,57 @@
-use std::io;
-use std::process::Command;
+/* Act as an accessor for all the tools, components and profiles */
+#[derive(Copy, Clone, Debug)]
+pub enum Profile {
+    Debug,
+    Release,
+}
 
-/** Programs to be used when building */
+#[derive(Copy, Clone, Debug)]
+pub enum Component {
+    Bootloader,
+}
+
+/* Represents one program and its args */
+#[derive(Debug)]
 pub struct Program {
-    pub cargo:     &'static str,
-    pub linker:    &'static str,
-    pub objcopy:   &'static str,
-    pub assembler: &'static str,
+    pub command:   &'static str,
+    pub args:      &'static[&'static str],
 }
 
-impl Program {
-
-    /**
-     * Check if all the programs are installed on the host system,
-     * Here we assume if 
-     */
-    #[cfg(target_os = "macos")]
-    pub fn check_install_all(&self) -> io::Result<()> {
-
-        // Coincidentially all of our programs uses this as their version command
-        let version_arg = ["--version"];
-
-        self.check_install(self.cargo, &version_arg)?;
-        self.check_install(self.linker, &version_arg)?;
-        self.check_install(self.objcopy, &version_arg)?;
-        self.check_install(self.assembler, &version_arg)?;
-
-        Result::Ok(())
-    }
-
-    /** Check whether a single program is installed */
-    fn check_install(&self, command: &str, args: &[&str]) -> io::Result<()> {
-
-        // Using .output() to consume stdout from external programs
-        Command::new(command).args(args).output()?;
-        Result::Ok(())
-    }
+/* Programs and args to be used when building */
+#[derive(Debug)]
+pub struct BuildPrograms {
+    pub cargo:     Program,
+    pub linker:    Program,
+    pub objcopy:   Program,
+    pub assembler: Program,
 }
 
-#[cfg(target_os = "macos")]
-pub static PROGRAMS: Program = Program {
-    cargo:     "cargo",
-    linker:    "ld.lld",
-    objcopy:   "x86_64elf-objcopy",
-    assembler: "nasm",
-};
+/* Programs to be used for each component */
+#[derive(Debug)]
+pub struct ComponentPrograms {
+    pub bootloader: BuildPrograms,
+}
+
+/* Programs to be used for each build profile */
+#[derive(Debug)]
+pub struct BuildProfile {
+    pub release: ComponentPrograms,
+    pub debug:   ComponentPrograms,
+}
+
+impl BuildProfile {
+
+    /* Get BuildPrograms associated with a profile and component */
+    pub fn get_build_programs(&self, profile: Profile,
+                              component: Component) -> &BuildPrograms {
+
+        let current_profile = match profile {
+            Profile::Release => &self.release,
+            Profile::Debug   => &self.debug,
+        };
+
+        match component {
+            Component::Bootloader => &current_profile.bootloader,
+        }
+    }
+}
