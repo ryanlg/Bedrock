@@ -1,8 +1,12 @@
+use super::bios::bda;
 use super::asm::{outb, inb};
 
-use crate::serial::SerialPort;
+use crate::serial::SerialConsole;
 
 /**
+ * Represents a serial port provided to us by the BIOS
+ * It holds an address - supposedly the address in the BDA (or set manually)
+ * that we can use `outb` to output characters to.
  */
 #[derive(Copy, Clone)]
 #[repr(transparent)]
@@ -12,9 +16,6 @@ impl BiosSerialPort {
     unsafe fn write_byte_at_offset(&self, offset: u16, byte: u8) {
         outb(self.0 + offset, byte);
     }
-}
-
-impl SerialPort for BiosSerialPort {
 
     unsafe fn init(&self) -> bool {
 
@@ -53,7 +54,7 @@ impl SerialPort for BiosSerialPort {
 
         for &byte in bytes {
             while !self.is_tx_empty() {}
-            self.write_byte_at_offset(0, byte);
+            self.tx_byte(byte);
         }
 
         true
@@ -62,5 +63,45 @@ impl SerialPort for BiosSerialPort {
     #[inline(always)]
     unsafe fn is_tx_empty(&self) -> bool {
         inb(self.0 + 5) & 0x20 != 0
+    }
+}
+
+/**
+ * Implementes the SerialConsole trait, use a BIOS COM port to print
+ * to the serial port
+ */
+pub struct BiosSerialConsole {
+    serial_port: BiosSerialPort,
+}
+
+impl BiosSerialConsole {
+    pub fn new(offset: u8) -> Self {
+        unsafe {
+            // 0x40 is the first COM port
+            let addr = bda::get_word_at_offset(offset as u16);
+            let port = BiosSerialPort(addr);
+
+            port.init();
+
+            BiosSerialConsole {
+                serial_port: port
+            }
+        }
+    }
+}
+
+impl SerialConsole for BiosSerialConsole {
+
+    fn print(&self, bytes: &[u8]) {
+        unsafe {
+            self.serial_port.tx_bytes(bytes);
+        }
+    }
+
+    fn println(&self) {
+        unsafe {
+            self.serial_port.tx_byte(13);  // \r
+            self.serial_port.tx_byte(10);  // \n
+        }
     }
 }
