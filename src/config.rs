@@ -8,17 +8,15 @@ pub static BUILD_PROFILE: BuildProfile = BuildProfile {
             cargo: Program {
                 command: "cargo",
                 args: &[
-                    "xbuild",
+                    "build",
                     "--release",
                     "--target",
-                    "../support/triples/i686-none-redstone.json",
+                    "i686-unknown-linux-gnu",
                 ]
             },
             linker: Program {
                 command: "ld.lld",
                 args: &[
-                    "--nmagic",
-                    "--omagic",
                     "--gc-sections",
                     "-Bstatic",
                     "--whole-archive",
@@ -49,16 +47,15 @@ pub static BUILD_PROFILE: BuildProfile = BuildProfile {
             cargo: Program {
                 command: "cargo",
                 args: &[
-                    "xbuild",
+                    "build",
                     "--target",
-                    "../support/triples/i686-none-redstone.json",
+                    "i686-unknown-linux-gnu",
+                    "--verbose",
                 ]
             },
             linker: Program {
                 command: "ld.lld",
                 args: &[
-                    "--nmagic",
-                    "--omagic",
                     "--gc-sections",
                     "-Bstatic",
                     "--whole-archive",
