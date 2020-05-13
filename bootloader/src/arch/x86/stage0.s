@@ -28,21 +28,22 @@ _boot_entry:
     mov  bp, sp
 
     ; Clear the window
-    call  real_mode.clear
-    call  real_mode.reset_cursor
+;   call  real_mode.clear
+;   call  real_mode.reset_cursor
 
-    mov   si, real_mode_strings.live
-    call  real_mode.println
+;   mov   si, real_mode_strings.live
+;   call  real_mode.println
 
-    mov   si, real_mode_strings.switch
-    call  real_mode.println
+;   mov   si, real_mode_strings.switch
+;   call  real_mode.println
 
+extern __all_sector_count
 extern __stage2_entry
     ; Read stage1 bootloader into memory
-    push  dword 0x0000
-    push  dword 0x0001
-    push  dword __stage2_entry
-    push  word 0x2
+    push  dword 0x0000              ; lba_high
+    push  dword 0x0001              ; lba_low
+    push  dword __stage2_entry      ; buffer_addr
+    push  word  __all_sector_count  ; sector_count
     call  real_mode.read_sectors
 
     ; Enter protected mode
@@ -60,7 +61,7 @@ extern __stage2_entry
 _pm_entry:
     ; Set all the segment register to the data segment
     mov   ax, 0x0010
-    mov   dx, ax
+    mov   ds, ax
     mov   es, ax
     mov   fs, ax
     mov   gs, ax

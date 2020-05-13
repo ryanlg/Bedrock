@@ -44,17 +44,19 @@ SECTIONS {
          */
         __rust_text_start = .;
         *(.rust_text)
-        __rust_text_end  = .;
+        __rust_text_end   = .;
 
-        /** Exhaust all other text segments */
-        *(.*text*)
-
-        /* Size has to be multiples of 512 bytes */
-        . = ALIGN(512);
-        __all_end = .;
+        __text_end = .;
     }
 
     /** Just in case rodata is placed defautly before our .text */
-    . = ALIGN(16);
-    .rodata           : { *(.rodata) }
+    .rodata      : ALIGN(16)    { *(.rodata) }
+    .data_rel_ro : ALIGN(4)     { *(.data_rel_ro) }
+    .got         : ALIGN(4)     { *(.got) }
+    .got_plt     : ALIGN(4)     { *(.got_plt) }
+
+    __end = .;
+
+    /** Calculate how many sectors the entire program needs */
+    __all_sector_count =  (__end - __stage2_entry) / 512 + 1;
 }
