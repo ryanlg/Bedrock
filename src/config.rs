@@ -27,7 +27,6 @@ pub static BUILD_PROFILE: BuildProfile = BuildProfile {
                 args: &[
                     "-O",
                     "binary",
-                    "--only-section=.text",
                 ]
             },
             assembler: Program {
