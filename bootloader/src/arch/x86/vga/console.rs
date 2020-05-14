@@ -96,12 +96,12 @@ impl VgaConsole {
 
 impl Console<Color> for VgaConsole {
 
-    fn set_foreground_color(&mut self, color: &Color) {
-        self.color.set_foreground_color(*color);
+    fn set_foreground_color(&mut self, color: Color) {
+        self.color.set_foreground_color(color);
     }
 
-    fn set_background_color(&mut self, color: &Color) {
-        self.color.set_background_color(*color);
+    fn set_background_color(&mut self, color: Color) {
+        self.color.set_background_color(color);
     }
 
     fn print_byte(&mut self, byte: u8) {

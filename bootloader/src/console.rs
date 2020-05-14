@@ -5,8 +5,8 @@ pub trait Console<Color>
         where Color: ConsoleColor {
 
     /* Foreground and background color - if supported */
-    fn set_foreground_color(&mut self, color: &Color);
-    fn set_background_color(&mut self, color: &Color);
+    fn set_foreground_color(&mut self, color: Color);
+    fn set_background_color(&mut self, color: Color);
 
     /* Print a sequence of bytes */
     fn print_bytes(&mut self, bytes: &[u8]);

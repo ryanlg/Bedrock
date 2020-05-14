@@ -114,8 +114,8 @@ impl SerialConsole {
 impl Console<SerialColor> for SerialConsole {
 
     // @incomplete
-    fn set_foreground_color(&mut self, _color: &SerialColor) {}
-    fn set_background_color(&mut self, _color: &SerialColor) {}
+    fn set_foreground_color(&mut self, _color: SerialColor) {}
+    fn set_background_color(&mut self, _color: SerialColor) {}
 
     /* Print a sequence of bytes */
     fn print_bytes(&mut self, bytes: &[u8]) {
