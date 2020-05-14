@@ -12,3 +12,6 @@ opt-level   = 3
 lto         = true
 panic       = 'abort'
 incremental = false
+
+[dependencies]
+intrinsics = { path = "../intrinsics" }

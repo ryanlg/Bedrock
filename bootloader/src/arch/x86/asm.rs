@@ -1,3 +1,5 @@
+use core::ptr::read_volatile;
+
 /** Assembly linkage */
 
 #[inline(always)]
@@ -19,5 +21,12 @@ pub unsafe fn inb(addr: u16) -> u8 {
               : "{dx}"(addr)
               :
               : "intel");
-    byte
+
+    // In situation where we don't need the return value,
+    // Rust will try to optimize away this call altogether
+    // even though we are basically writing assembly directly,
+    // which is ridiculous.
+    //
+    // Mark the byte as volatile to workaround the optimization.
+    read_volatile(&byte)
 }

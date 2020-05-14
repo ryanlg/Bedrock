@@ -114,34 +114,37 @@ impl SerialConsole {
 impl Console<SerialColor> for SerialConsole {
 
     // @incomplete
-    fn set_foreground_color(&self, _color: &SerialColor) {}
-    fn set_background_color(&self, _color: &SerialColor) {}
+    fn set_foreground_color(&mut self, _color: &SerialColor) {}
+    fn set_background_color(&mut self, _color: &SerialColor) {}
 
     /* Print a sequence of bytes */
-    fn print_bytes(&self, bytes: &[u8]) {
+    fn print_bytes(&mut self, bytes: &[u8]) {
         unsafe {
             self.serial_port.tx_bytes(bytes);
         }
     }
 
     /* Print just one byte */
-    fn print_byte(&self, byte: u8) {
+    fn print_byte(&mut self, byte: u8) {
         unsafe {
             self.serial_port.tx_byte(byte);
         }
     }
 
     /* Print a sequence of bytes, end with a newline */
-    fn println_bytes(&self, bytes: &[u8]) {
-        self.print_newline();
+    fn println_bytes(&mut self, bytes: &[u8]) {
         self.print_bytes(bytes);
+        self.print_newline();
     }
 
     /* Print just a new line */
-    fn print_newline(&self) {
+    fn print_newline(&mut self) {
         unsafe {
             self.serial_port.tx_byte(13);  // \r
             self.serial_port.tx_byte(10);  // \n
         }
     }
+
+    /* You can't clear a serial output */
+    fn clear(&mut self) { }
 }
