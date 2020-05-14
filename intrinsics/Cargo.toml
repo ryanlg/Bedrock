@@ -1,0 +1,5 @@
+[package]
+name = "intrinsics"
+version = "0.1.0"
+authors = ["Ryan Liang <rl@ryanl.io>"]
+edition = "2018"
