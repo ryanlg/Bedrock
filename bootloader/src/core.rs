@@ -1,27 +1,14 @@
-use core::marker::PhantomData;
+use crate::console;
 
-use crate::console::{Console, ConsoleColor};
+/// Strcture to share some core information between different
+/// components of the bootloader. Implementations must provide
+/// ways to access this struct globally by get_global(). This enables
+/// some convenient macro.
+pub trait Core {
 
-/* Main structure that holds some info that will get shared around */
-#[repr(C)]
-pub struct Core<C, CC>
-    where CC: ConsoleColor, C:  Console<CC>    {
+    type ConsoleColor: console::ConsoleColor;
+    type Console:      console::Console<Self::ConsoleColor>;
 
-    pub console: C,
-
-    // Yes, we don't need this, but rustc will complain about ConsoleColor not
-    // being used if we don't include it. Marking this as PhantomData
-    // to calm the compiler down.
-    console_color: PhantomData<CC>,
-}
-
-impl<C, CC> Core<C, CC>
-    where CC: ConsoleColor, C:  Console<CC> {
-
-    pub fn new(c: C) -> Self {
-        Core {
-            console: c,
-            console_color: PhantomData,
-        }
-    }
+    fn get_console(&mut self) -> &mut Self::Console;
+    fn get_global() -> &'static mut Self;
 }
