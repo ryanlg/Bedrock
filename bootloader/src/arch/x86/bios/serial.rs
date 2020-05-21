@@ -76,19 +76,6 @@ impl SerialPort {
     }
 
     #[inline(always)]
-    unsafe fn tx_bytes(&self, bytes: &[u8]) -> bool{
-
-        if !self.is_valid() { return false; }
-
-        for &byte in bytes {
-            while !self.is_tx_empty() {}
-            self.tx_byte(byte);
-        }
-
-        true
-    }
-
-    #[inline(always)]
     unsafe fn is_tx_empty(&self) -> bool {
         inb(self.0 + 5) & 0x20 != 0
     }
@@ -109,32 +96,16 @@ impl SerialConsole {
         }
     }
 
-}
-
-impl Console<SerialColor> for SerialConsole {
-
-    // @incomplete
-    fn set_foreground_color(&mut self, _color: SerialColor) {}
-    fn set_background_color(&mut self, _color: SerialColor) {}
-
-    /* Print a sequence of bytes */
-    fn print_bytes(&mut self, bytes: &[u8]) {
-        unsafe {
-            self.serial_port.tx_bytes(bytes);
-        }
-    }
-
-    /* Print just one byte */
-    fn print_byte(&mut self, byte: u8) {
+    /// Print just one byte
+    /// Can be set to be blocking - will block until the byte is actually transimitted
+    fn print_byte(&mut self, byte: u8, blocking: bool) {
         unsafe {
             self.serial_port.tx_byte(byte);
-        }
-    }
 
-    /* Print a sequence of bytes, end with a newline */
-    fn println_bytes(&mut self, bytes: &[u8]) {
-        self.print_bytes(bytes);
-        self.print_newline();
+            if blocking {
+                while !self.serial_port.is_tx_empty() {}
+            }
+        }
     }
 
     /* Print just a new line */
@@ -145,6 +116,33 @@ impl Console<SerialColor> for SerialConsole {
         }
     }
 
-    /* You can't clear a serial output */
+}
+
+impl Console<SerialColor> for SerialConsole {
+
+    // @incomplete
+    fn set_foreground_color(&mut self, _color: SerialColor) {}
+    fn set_background_color(&mut self, _color: SerialColor) {}
+
+    /// You can't clear a serial output
     fn clear(&mut self) { }
+}
+
+
+impl core::fmt::Write for SerialConsole {
+
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+
+        for byte in s.bytes() {
+
+            // Call _newline() if byte is a new line
+            match byte {
+                b'\n' => self.print_newline(),
+                _     => self.print_byte(byte, true),
+
+            }
+        }
+
+        Ok(())
+    }
 }

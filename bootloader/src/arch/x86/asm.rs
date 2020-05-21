@@ -30,29 +30,3 @@ pub unsafe fn inb(addr: u16) -> u8 {
     // Mark the byte as volatile to workaround the optimization.
     read_volatile(&byte)
 }
-
-#[inline(always)]
-#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
-pub unsafe fn store_gs(addr: u32) {
-
-    llvm_asm!("mov gs, eax"
-              :
-              : "{eax}"(addr)
-              :
-              : "intel");
-}
-
-
-#[inline(always)]
-#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
-pub unsafe fn get_gs() -> u32 {
-    let addr: u32;
-
-    llvm_asm!("mov eax, gs"
-              : "={eax}"(addr)
-              :
-              :
-              : "intel");
-
-    addr
-}

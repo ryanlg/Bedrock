@@ -7,6 +7,9 @@
 // Required to pass compilation
 #![feature(lang_items)]
 
+// Needed for some MaybeUninit APIs
+#![feature(maybe_uninit_extra)]
+
 // Import intrinsics, we are not going to use them directly
 // but Rust code will try to link to these functions
 extern crate intrinsics;
@@ -20,12 +23,16 @@ mod panic;
 
 // ================ Imports ================
 use crate::core::Core;
-use crate::console::Console;
 
 
 #[no_mangle]
 #[cfg(target_arch = "x86")]
 #[link_section = ".rust_text"]
 extern "C" fn _bootloader_entry() -> ! {
+
+    use crate::arch::x86::core::Core;
+
+    print!("TESTING");
+
     loop {}
 }

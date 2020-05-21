@@ -52,30 +52,23 @@ impl Console<Color> for DualConsole {
         self.vga_console.set_background_color(VgaColor::from(color));
     }
 
-    fn print_byte(&mut self, byte: u8) {
-        self.serial_console.print_byte(byte);
-        self.vga_console.print_byte(byte);
-    }
-
-    fn print_bytes(&mut self, bytes: &[u8]) {
-        self.serial_console.print_bytes(bytes);
-        self.vga_console.print_bytes(bytes);
-    }
-
-    fn print_newline(&mut self) {
-        self.serial_console.print_newline();
-        self.vga_console.print_newline();
-    }
-
-    fn println_bytes(&mut self, bytes: &[u8]) {
-        self.serial_console.println_bytes(bytes);
-        self.vga_console.println_bytes(bytes);
-    }
-
     fn clear(&mut self) {
         self.vga_console.clear();
     }
 }
+
+impl core::fmt::Write for DualConsole {
+
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+
+        // @error_handling
+        let _ = self.serial_console.write_str(s);
+        let _ = self.vga_console.write_str(s);
+
+        Ok(())
+    }
+}
+
 
 impl From<Color> for VgaColor {
     fn from(error: Color) -> Self {

@@ -61,10 +61,9 @@ impl VgaConsole {
         self.try_new_line();
     }
 
-    /* Disable blinking
-     * Apprently QEMU by default disables blinking while Bochs enables it,
-     * to unify the output, we disable the blinking unconditionally
-     * */
+    /// # Disable blinking
+    /// Apprently QEMU by default disables blinking while Bochs enables it,
+    /// to unify the output, we disable the blinking unconditionally
     fn disable_blink(&self) {
 
         unsafe {
@@ -92,6 +91,19 @@ impl VgaConsole {
             outb(VGA_TEXT_ATTR_ADDR_REG_ADDR, old_data_reg_value);
         }
     }
+
+    /// Print a single byte to the serial console
+    fn print_byte(&mut self, byte: u8) {
+        self.buffer.write_cell(self.row, self.col, byte, self.color);
+        self.advance();
+    }
+
+    /// Print a new line
+    fn print_newline(&mut self) {
+        self.row += 1;
+        self.col  = 0;
+        self.try_scroll_up();
+    }
 }
 
 impl Console<Color> for VgaConsole {
@@ -104,32 +116,23 @@ impl Console<Color> for VgaConsole {
         self.color.set_background_color(color);
     }
 
-    fn print_byte(&mut self, byte: u8) {
-        self.buffer.write_cell(self.row, self.col, byte, self.color);
-        self.advance();
-    }
-
-    fn print_bytes(&mut self, bytes: &[u8]) {
-        for &byte in bytes {
-            self.print_byte(byte);
-        }
-    }
-
-    fn print_newline(&mut self) {
-        self.row += 1;
-        self.col  = 0;
-        self.try_scroll_up();
-    }
-
-    fn println_bytes(&mut self, bytes: &[u8]) {
-        for &byte in bytes {
-            self.print_byte(byte);
-        }
-
-        self.print_newline();
-    }
-
     fn clear(&mut self) {
         self.buffer.clear(self.color);
+    }
+}
+
+impl core::fmt::Write for VgaConsole {
+
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+
+        for byte in s.bytes() {
+
+            match byte {
+                b'\n' => self.print_newline(),
+                _     => self.print_byte(byte),
+            }
+        }
+
+        Ok(())
     }
 }

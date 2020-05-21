@@ -1,6 +1,6 @@
 #![no_std]
 
-#![feature(global_asm)]
+#![feature(global_asm, llvm_asm)]
 
 /*
  * Rudimentary memcpy implementation in Rust
@@ -19,6 +19,25 @@ pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, count: usize) {
         *dest.offset(i as isize) = *src.offset(i as isize);
         i += 1;
     }
+}
+
+/*
+ * Rudimentary memset implementation in Rust
+ */
+#[no_mangle]
+pub unsafe extern "C" fn memset(dest: *mut u8, c: char, count: usize) {
+
+    // Here we assuem direction flag is cleared
+    llvm_asm!("rep stosb"
+              :
+              : "{edi}"(dest),
+                "{ecx}"(count),
+                "{al}"(c)
+              : "memory",
+                "edi",
+                "ecx",
+                "al"
+              : "intel");
 }
 
 /*
