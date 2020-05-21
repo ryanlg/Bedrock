@@ -1,6 +1,6 @@
 #![no_std]
 
-#![feature(global_asm, llvm_asm)]
+#![feature(llvm_asm)]
 
 /*
  * Rudimentary memcpy implementation in Rust
@@ -22,12 +22,12 @@ pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, count: usize) {
 }
 
 /*
- * Rudimentary memset implementation in Rust
+ * Rudimentary memset implementation in asm
  */
 #[no_mangle]
 pub unsafe extern "C" fn memset(dest: *mut u8, c: char, count: usize) {
 
-    // Here we assuem direction flag is cleared
+    // Here we assume direction flag is cleared
     llvm_asm!("rep stosb"
               :
               : "{edi}"(dest),
@@ -49,8 +49,10 @@ pub unsafe extern "C" fn memset(dest: *mut u8, c: char, count: usize) {
  * in Release build, LTO will strip away any traces of this, so this is just
  * here to pass the linker in a Debug build. We shouldn't hit this anyways.
  */
-global_asm!(r#"
-    .global _Unwind_Resume
-    _Unwind_Resume:
-        ud2
-"#);
+#[no_mangle]
+pub unsafe extern "C" fn _Unwind_Resume() {
+
+    llvm_asm!("ud2"
+              :::
+              : "intel");
+}
