@@ -9,4 +9,9 @@ name = "redstone-bootloader"
 version = "0.1.0"
 dependencies = [
  "intrinsics",
+ "x86_64",
 ]
+
+[[package]]
+name = "x86_64"
+version = "0.1.0"

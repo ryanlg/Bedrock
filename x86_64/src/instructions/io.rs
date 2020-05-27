@@ -1,9 +1,6 @@
 use core::ptr::read_volatile;
 
-/** Assembly linkage */
-
 #[inline(always)]
-#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 pub unsafe fn outb(addr: u16, byte: u8) {
     llvm_asm!("out dx, al"
               :

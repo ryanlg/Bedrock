@@ -15,3 +15,4 @@ incremental = false
 
 [dependencies]
 intrinsics = { path = "../intrinsics" }
+x86_64     = { path = "../x86_64" }

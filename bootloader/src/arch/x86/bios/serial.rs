@@ -1,5 +1,5 @@
-use crate::arch::x86::bios::bda;
-use crate::arch::x86::asm::{outb, inb};
+use x86_64::bios::bda;
+use x86_64::instructions::io::{outb, inb};
 
 use crate::console::{ConsoleColor, Console};
 

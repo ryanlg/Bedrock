@@ -1,6 +1,6 @@
-use crate::console::{Console, ConsoleColor};
+use x86_64::instructions::io::{inb, outb};
 
-use crate::arch::x86::asm::{inb, outb};
+use crate::console::{Console, ConsoleColor};
 use crate::arch::x86::constants::*;
 use crate::arch::x86::vga::text::TextBuffer;
 use crate::arch::x86::vga::color::{Color, TextColor};
