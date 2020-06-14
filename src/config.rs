@@ -79,6 +79,85 @@ pub static BUILD_PROFILE: BuildProfile = BuildProfile {
     }
 };
 
+#[cfg(target_os = "linux")]
+pub static BUILD_PROFILE: BuildProfile = BuildProfile {
+    release: ComponentPrograms {
+
+        bootloader: BuildPrograms {
+            cargo: Program {
+                command: "cargo",
+                args: &[
+                    "build",
+                    "--release",
+                    "--target",
+                    "i686-unknown-linux-gnu",
+                ]
+            },
+            linker: Program {
+                command: "ld.lld",
+                args: &[
+                    "--gc-sections",
+                    "-Bstatic",
+                    "--whole-archive",
+                ],
+            },
+            objcopy: Program {
+                command: "objcopy",
+                args: &[
+                    "-O",
+                    "binary",
+                ]
+            },
+            assembler: Program {
+                command: "nasm",
+                args: &[
+                    "-f",
+                    "elf"
+                ]
+            }
+        }
+
+    },
+
+    debug: ComponentPrograms {
+
+        bootloader: BuildPrograms {
+            cargo: Program {
+                command: "cargo",
+                args: &[
+                    "build",
+                    "--target",
+                    "i686-unknown-linux-gnu",
+                    "--verbose",
+                ]
+            },
+            linker: Program {
+                command: "ld.lld",
+                args: &[
+                    "--gc-sections",
+                    "-Bstatic",
+                    "--whole-archive",
+                ],
+            },
+            objcopy: Program {
+                command: "objcopy",
+                args: &[
+                    "-O",
+                    "binary",
+                ]
+            },
+            assembler: Program {
+                command: "nasm",
+                args: &[
+                    "-f",
+                    "elf"
+                ]
+            }
+        }
+
+    }
+};
+
 // ================================================
 pub static BOOTLOADER_ARCH:   &str   = "x86";
 pub static BOOTLOADER_LIB:    &str   = "libredstone_bootloader.a";
