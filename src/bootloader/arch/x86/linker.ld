@@ -12,9 +12,10 @@ SECTIONS {
      */
     /DISCARD/ : {
         *(.eh_frame*)
+        *(.gcc_*)
     }
 
-    .text :
+    .bootloader :
     {
         __start = .;
 
@@ -50,7 +51,7 @@ SECTIONS {
     }
 
     /** Just in case rodata is placed defautly before our .text */
-    .rodata      : ALIGN(16)    { *(.rodata) }
+    .rodata      : ALIGN(16)    { *(.rodata.*) }
     .data_rel_ro : ALIGN(4)     { *(.data_rel_ro) }
     .got         : ALIGN(4)     { *(.got) }
     .got_plt     : ALIGN(4)     { *(.got_plt) }

@@ -2,6 +2,7 @@ build_dir         := build/
 
 bootloader_dir    := $(build_dir)/bootloader
 bootloader_name   := redstone-bootloader-x86
+
 bootloader_padded := $(bootloader_name).padded.bin
 
 # =================== Programs ==================
