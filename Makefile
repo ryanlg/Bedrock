@@ -1,7 +1,7 @@
 build_dir         := build/
 
 bootloader_dir    := $(build_dir)/bootloader
-bootloader_name   := redstone-bootloader-x86
+bootloader_name   := bedrock-bootloader-x86
 
 bootloader_padded := $(bootloader_name).padded.bin
 
@@ -14,7 +14,7 @@ qemu_drive_arg  := -drive format=raw,file=$(bootloader_dir)/$(bootloader_padded)
 qemu_serial_arg := -serial stdio
 
 bochs_drive_arg := 'ata0-master: type=disk, \
-                                 path="build/bootloader/redstone-bootloader-x86.padded.bin", \
+                                 path="build/bootloader/bedrock-bootloader-x86.padded.bin", \
 			 					 mode=flat, \
 								 cylinders=1, \
 								 heads=1, \
@@ -27,10 +27,10 @@ bochs_drive_arg := 'ata0-master: type=disk, \
 all: debug
 
 debug:
-	@$(CARGO) run --release
+	@$(CARGO) build
 
 release:
-	@$(CARGO) run --release -- --release
+	@$(CARGO) build --release
 
 # ---------------- Run ----------------
 qemu:
