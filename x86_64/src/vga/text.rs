@@ -1,5 +1,5 @@
-use crate::arch::x86::constants::*;
-use super::color::TextColor;
+use crate::constants::*;
+use crate::vga::color::TextColor;
 
 /** Represents a two byte VGA character */
 #[repr(C)]

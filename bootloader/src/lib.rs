@@ -31,7 +31,9 @@ use crate::core::Core;
 extern "C" fn _bootloader_entry() -> ! {
 
     use crate::arch::x86::core::Core;
+    use crate::console::Console;
 
+    core!().get_console().clear();
     print!("TESTING");
 
     loop {}

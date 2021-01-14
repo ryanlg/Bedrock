@@ -1,7 +1,5 @@
-use x86_64::bios::bda;
-use x86_64::instructions::io::{outb, inb};
-
-use crate::console::{ConsoleColor, Console};
+use super::bda;
+use crate::instructions::io::{outb, inb};
 
 /**
 * Since in BIOS's BDA there's only 4 ports defined, we can parameterize them
@@ -18,8 +16,8 @@ pub enum Port {
 
 /** @incomplete: place holder for now */
 pub enum SerialConsoleColor { }
-impl ConsoleColor for SerialConsoleColor {}
-type SerialColor = SerialConsoleColor;
+// impl ConsoleColor for SerialConsoleColor {}
+// type SerialColor = SerialConsoleColor;
 
 /**
 * Implementes the SerialConsole trait, use a BIOS COM port to print
@@ -117,17 +115,6 @@ impl SerialConsole {
     }
 
 }
-
-impl Console<SerialColor> for SerialConsole {
-
-    // @incomplete
-    fn set_foreground_color(&mut self, _color: SerialColor) {}
-    fn set_background_color(&mut self, _color: SerialColor) {}
-
-    /// You can't clear a serial output
-    fn clear(&mut self) { }
-}
-
 
 impl core::fmt::Write for SerialConsole {
 

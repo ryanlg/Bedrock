@@ -1,35 +1,26 @@
-use x86_64::instructions::io::{inb, outb};
+use crate::constants::*;
+use crate::vga::text::TextBuffer;
+use crate::vga::color::{Color, TextColor};
+use crate::instructions::io::{inb, outb};
 
-use crate::console::{Console, ConsoleColor};
-use crate::arch::x86::constants::*;
-use crate::arch::x86::vga::text::TextBuffer;
-use crate::arch::x86::vga::color::{Color, TextColor};
-
-// @incomplete
-impl ConsoleColor for Color {}
-
-pub struct VgaConsole {
-    buffer:  TextBuffer,
-    color:   TextColor,
+pub struct Console {
+    pub buffer:  TextBuffer,
+    pub color:   TextColor,
 
     // Current column and row to print characters to
-    col:     usize,
-    row:     usize,
+    pub col:     usize,
+    pub row:     usize,
 }
 
-impl VgaConsole {
-    pub fn new(clear: bool) -> Self {
+impl Console {
+    pub fn new() -> Self {
 
-        let mut console = VgaConsole {
+        let  console = Console {
             buffer:   TextBuffer::new(),
             color:    TextColor::new(Color::White, Color::Black),
             col:      0,
             row:      0,
         };
-
-        if clear {
-            console.clear();
-        }
 
         // Disable blink by default
         console.disable_blink();
@@ -106,22 +97,7 @@ impl VgaConsole {
     }
 }
 
-impl Console<Color> for VgaConsole {
-
-    fn set_foreground_color(&mut self, color: Color) {
-        self.color.set_foreground_color(color);
-    }
-
-    fn set_background_color(&mut self, color: Color) {
-        self.color.set_background_color(color);
-    }
-
-    fn clear(&mut self) {
-        self.buffer.clear(self.color);
-    }
-}
-
-impl core::fmt::Write for VgaConsole {
+impl core::fmt::Write for Console {
 
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
 

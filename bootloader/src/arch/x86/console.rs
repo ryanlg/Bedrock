@@ -1,8 +1,8 @@
 use crate::console::{Console, ConsoleColor};
 
-use super::bios::serial::{SerialConsole, Port};
-use super::vga::color::Color as VgaColor;
-use super::vga::console::VgaConsole;
+use x86_64::bios::serial::{SerialConsole, Port};
+use x86_64::vga::color::Color as VgaColor;
+use x86_64::vga::console::Console as VgaConsole;
 
 /* Currently just a copy of VGA color, might change in the future */
 #[repr(u8)]
@@ -37,7 +37,7 @@ impl DualConsole {
     pub fn new() -> Self {
         DualConsole {
             serial_console: SerialConsole::new(Port::First),
-            vga_console:    VgaConsole::new(true),
+            vga_console:    VgaConsole::new(),
         }
     }
 }
@@ -92,3 +92,20 @@ impl From<Color> for VgaColor {
         }
     }
 }
+
+impl Console<VgaColor> for VgaConsole {
+
+    fn set_foreground_color(&mut self, color: VgaColor) {
+        self.color.set_foreground_color(color);
+    }
+
+    fn set_background_color(&mut self, color: VgaColor) {
+        self.color.set_background_color(color);
+    }
+
+    fn clear(&mut self) {
+        self.buffer.clear(self.color);
+    }
+}
+
+impl ConsoleColor for VgaColor {}
