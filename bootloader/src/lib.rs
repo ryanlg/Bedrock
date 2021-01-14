@@ -26,7 +26,7 @@ use crate::core::Core;
 
 
 #[no_mangle]
-#[cfg(target_arch = "x86_64")]
+#[cfg(target_arch = "x86")]
 #[link_section = ".rust_text"]
 extern "C" fn _bootloader_entry() -> ! {
 
