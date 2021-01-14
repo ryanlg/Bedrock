@@ -1,14 +1,10 @@
 [package]
-name = "bedrock"
+name = "bedrock-build"
 version = "0.1.0"
 authors = ["Ryan Liang <rl@ryanl.io>"]
 edition = "2018"
 
-[lib]
-crate-type = ["staticlib"]
-
 [profile.release]
 opt-level   = 3
 lto         = true
-panic       = 'abort'
 incremental = true

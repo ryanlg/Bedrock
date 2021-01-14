@@ -27,10 +27,10 @@ bochs_drive_arg := 'ata0-master: type=disk, \
 all: debug
 
 debug:
-	@$(CARGO) build
+	@$(CARGO) run -- --release
 
 release:
-	@$(CARGO) build --release
+	@$(CARGO) run --release -- --release
 
 # ---------------- Run ----------------
 qemu:

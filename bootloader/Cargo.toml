@@ -1,0 +1,18 @@
+[package]
+name = "redstone-bootloader"
+version = "0.1.0"
+authors = ["Ryan Liang <rl@ryanl.io>"]
+edition = "2018"
+
+[lib]
+crate-type = ["staticlib"]
+
+[profile.release]
+opt-level   = 3
+lto         = true
+panic       = 'abort'
+incremental = false
+
+[dependencies]
+intrinsics = { path = "../intrinsics" }
+x86_64     = { path = "../x86_64" }
